@@ -161,13 +161,19 @@ void tab::Print()
 
 //mtoda tworzaca nowa tablice z losowymi elementami
 
-void tab::SymBuild(int s)
+float tab::SymBuild(int s)
 {
+	timer * clock = new timer;
+	clock->StartCounter();
 	t = new int[s];
 	for(int j = 0; j < s; j++)
 	{
-		t[j] = rand()%100;
+		t[j] = rand()%N;
 	}
+	float build_time = clock->GetCounter();
+	clock = NULL;
+	delete clock;
+	return build_time;
 }
 
 //metoda symulujaca dodawanie elementu na "r" tablicach o losowych elementach rozmiaru "s"
@@ -175,6 +181,7 @@ void tab::SymBuild(int s)
 void tab::SymAdd(int s, int r)
 {
 	int value, position, start, size = s, rep = r;
+	float build_time =0;
 	cout << "Pozycja dodawania:\n1. Poczatek tablicy\n2. Koniec tablicy\n3. Losowe miejsce\n";
 	cin >> start;
 	if  (start == 1) position = 0;
@@ -184,8 +191,8 @@ void tab::SymAdd(int s, int r)
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
-		value = rand()%100;
+		build_time += SymBuild(size);
+		value = rand()%N;
 		if(position <=size){
 			size++;
 			int * q = new int[size];
@@ -207,7 +214,7 @@ void tab::SymAdd(int s, int r)
 		}
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";
 	clock = NULL;
 	delete clock;
 	getch();
@@ -218,6 +225,7 @@ void tab::SymAdd(int s, int r)
 void tab::SymDelete(int s, int r)
 {
 	int position, start, size = s, rep = r;
+	float build_time =0;
 	cout << "Pozycja usuwania:\n1. Poczatek tablicy\n2. Koniec tablicy\n3. Losowe miejsce\n";
 	cin >> start;
 	if  (start == 1) position = 0;
@@ -227,7 +235,7 @@ void tab::SymDelete(int s, int r)
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
+		build_time += SymBuild(size);
 		if(size>=1 && position <= size){
 		size--;
 		int * q = new int[size];
@@ -248,7 +256,7 @@ void tab::SymDelete(int s, int r)
 		}	
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
@@ -259,14 +267,15 @@ void tab::SymDelete(int s, int r)
 void tab::SymSearch(int s, int r)
 {
 	int value, size = s, rep = r;
+	float build_time =0;
 	bool exist;
 	timer * clock = new timer;
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
+		build_time += SymBuild(size);
 		exist = false;
-		value = rand()%100;
+		value = rand()%N;
 		for(int j = 0; j < size; j++)
 		{
 			if (t[j]==value) 
@@ -277,7 +286,7 @@ void tab::SymSearch(int s, int r)
 		}
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
