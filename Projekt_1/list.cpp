@@ -5,6 +5,7 @@
 
 #include "list.h"
 
+
 //metody klasy obslugujacej liste
 
 
@@ -179,19 +180,25 @@ void list::Print()
 
 //mtoda tworzaca nowa liste z losowymi elementami
 
-void list::SymBuild(int s)
+float list::SymBuild(int s)
 {
+	timer * clock = new timer;
+	clock->StartCounter();
 	element * temp;
 	for(int j = 0; j < s; j++)
 	{
 		temp = new element;
-		temp->value = rand()%100;
+		temp->value = rand()%N;
 		temp->next = NULL;
 		temp->prev = last;
 		last = temp;
 		if(temp->prev) temp->prev->next = temp;
 		else first = temp;
 	}
+	float build_time = clock->GetCounter();
+	clock = NULL;
+	delete clock;
+	return build_time;
 }
 
 //metoda symulujaca dodawanie elementu na "r" listach o losowych elementach rozmiaru "s"
@@ -199,6 +206,7 @@ void list::SymBuild(int s)
 void list::SymAdd(int s, int r)
 {
 	int start, size = s, rep = r;
+	float build_time =0;
 	element * temp, * added;
 	cout << "Pozycja usuwania:\n1. Poczatek listy\n2. Koniec listy\n3. Losowe miejsce\n";
 	cin >> start;
@@ -206,17 +214,17 @@ void list::SymAdd(int s, int r)
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
+		build_time += SymBuild(size);
 		if  (start == 1){
 			temp = new element;
-			temp->value=rand()%100;
+			temp->value=rand()%N;
 			temp->prev=NULL;
 			temp->next=first;
 			first=temp;
 		}
 		else if (start == 2){
 			temp = new element;
-			temp->value=rand()%100;
+			temp->value=rand()%N;
 			temp->next=NULL;
 			temp->prev=last;
 			last=temp;
@@ -234,12 +242,12 @@ void list::SymAdd(int s, int r)
 				temp->next = added;
 				added->prev = temp;
 				added->next->prev = added;
-				added->value = rand()%100;
+				added->value = rand()%N;
 			}
 			else if (!temp->prev)
 			{
 				temp = new element;
-				temp->value=rand()%100;
+				temp->value=rand()%N;
 		   	   	temp->prev=NULL;
 				temp->next=first;
 				first=temp;
@@ -247,7 +255,7 @@ void list::SymAdd(int s, int r)
 			else if (!temp->next)
 			{
 				temp = new element;
-			   	temp->value=rand()%100;
+			   	temp->value=rand()%N;
 				temp->next=NULL;
 			   	temp->prev=last;
 				last=temp;
@@ -256,7 +264,7 @@ void list::SymAdd(int s, int r)
 	size++;
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
@@ -267,6 +275,7 @@ void list::SymAdd(int s, int r)
 void list::SymDelete(int s, int r)
 {
 	int start, size = s, rep = r;
+	float build_time =0;
 	element * temp;
 	cout << "Pozycja usuwania:\n1. Poczatek listy\n2. Koniec listy\n3. Losowe miejsce\n";
 	cin >> start;
@@ -274,7 +283,7 @@ void list::SymDelete(int s, int r)
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
+		build_time += SymBuild(size);
 		if  (start == 1){
 			temp = first;
 			first = temp->next;
@@ -311,7 +320,7 @@ void list::SymDelete(int s, int r)
 		size--;
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
@@ -323,24 +332,25 @@ void list::SymDelete(int s, int r)
 void list::SymSearch(int s, int r)
 {
 	int value, size = s, rep = r;
+	float build_time =0;
 	bool exist;
 	element * temp;
 	timer * clock = new timer;
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
+		build_time += SymBuild(size);
 		exist = false;
-		value = rand()%100;
+		value = rand()%N;
 		temp = first;
-		for(int i = 0; i < size; i++)
+		for(int i = 0; i < size && !exist; i++)
 		{
 			if (temp->value==value) exist = true;
 			temp = temp->next;
 		}
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();

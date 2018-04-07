@@ -167,24 +167,25 @@ void heap::Build()
 
 }
 
-//metoda wyszukujaca wybrany element
+//funkcja wywolywana do wyszukiwania elementu
+bool heap::Find(int value, int node)
+{
+	bool ret = false;
+	int left = 2*node+1, right = 2*node+2;
+	if(node < size && (h[node] == value || h[left] == value || h[right] == value)) ret = true;
+	if (ret == false && left < size && h[left] > value) ret = Find(value, left);
+	if (ret == false && right < size && h[right] > value) ret = Find(value, right);
+	return ret;
+}
 
+//metoda wyszukujaca wybrany element
 void heap::Search()
 {
 	int value;
-	bool exist = false;
+	bool exist;
 	cout << "Szukana wartosc: ";
 	cin >> value;
-	
-	for(int i = 0; i < size; i++)
-	{
-		if (h[i]==value) 
-		{
-			exist = true;
-			break;
-		}
-	}
-	
+	exist = Find(value, 0);
 	if (exist) cout << "Wyszukiwana wartosc znajduje sie w kopcu\n";
 	else cout << "Wyszukiwana wartosc nie znajduje sie w kopcu\n";
 	cout << "(nacisnij dowolny przycisk)";
@@ -220,15 +221,17 @@ void heap::Print()
 
 //metoda tworzaca nowy kopiec binarny z losowymi elementami
 
-void heap::SymBuild(int s)
+float heap::SymBuild(int s)
 {
+	timer * clock = new timer;
+	clock->StartCounter();
 	int temp;
 	h = new int[s];
-	h[0] = rand()%100;
+	h[0] = rand()%N;
 	for(int i = 1; i < s; i++)
 	{
 		//uzyty algorytm wstawiania nowego elementu
-		temp = rand()%100;
+		temp = rand()%N;
 		int j, k;
 		j=i;
 		k=(j-1)/2;
@@ -240,6 +243,10 @@ void heap::SymBuild(int s)
 		}
 		h[j] = temp;
 	}
+	float build_time = clock->GetCounter();
+	clock = NULL;
+	delete clock;
+	return build_time;
 }
 
 //metoda symulujaca dodawanie elementu na "r" kopcach binarnych o losowych elementach rozmiaru "s"
@@ -247,12 +254,13 @@ void heap::SymBuild(int s)
 void heap::SymAdd(int s, int r)
 {
 	int temp, size = s, rep = r;
+	float build_time =0;
 	timer * clock = new timer;
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
-		temp = rand()%100;
+		build_time += SymBuild(size);
+		temp = rand()%N;
 		int * q = new int[size];
 		//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
 		for(int i = 0; i < size; i++)
@@ -281,7 +289,7 @@ void heap::SymAdd(int s, int r)
 		h[j] = temp;
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
@@ -292,14 +300,15 @@ void heap::SymAdd(int s, int r)
 void heap::SymDelete(int s, int r)
 {
 	int size = s, rep = r;
+	float build_time =0;
 	timer * clock = new timer;
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
+		build_time += SymBuild(size);
 		if (size > 0)
 		{
-		    int value = rand()%100;
+		    int value = rand()%N;
 		   	bool exist = false;
 			//wyszukiwanie wartosci do usuniecia
 			for(int l = 0; l < size; l++)
@@ -346,7 +355,7 @@ void heap::SymDelete(int s, int r)
 		}
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
@@ -357,25 +366,18 @@ void heap::SymDelete(int s, int r)
 void heap::SymSearch(int s, int r)
 {
 	int value, size = s, rep = r;
+	float build_time =0;
 	bool exist;
 	timer * clock = new timer;
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
-		SymBuild(size);
-		exist = false;
-		value = rand()%100;
-		for(int j = 0; j < size; j++)
-		{
-			if (h[j]==value) 
-			{
-				exist = true;
-				break;
-		   	}
-		}
+		build_time += SymBuild(size);
+		value = rand()%N;
+		exist = Find(value, 0);
 	}
 	system("cls");
-	cout << "Sredni czas wykonania: " << (clock->GetCounter())/rep << "\n(nacisnij dowolny przycisk)";;
+	cout << "Sredni czas wykonania: " << (clock->GetCounter()-build_time)/rep << "\n(nacisnij dowolny przycisk)";;
 	clock = NULL;
 	delete clock;
 	getch();
