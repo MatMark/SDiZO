@@ -167,14 +167,14 @@ void heap::Build()
 
 }
 
-//funkcja wywolywana do wyszukiwania elementu
+//metoda wywolywana do wyszukiwania elementu
 bool heap::Find(int value, int node)
 {
 	bool ret = false;
-	int left = 2*node+1, right = 2*node+2;
-	if(node < size && (h[node] == value || h[left] == value || h[right] == value)) ret = true;
-	if (ret == false && left < size && h[left] > value) ret = Find(value, left);
-	if (ret == false && right < size && h[right] > value) ret = Find(value, right);
+	int left = 2*node+1, right = 2*node+2;	//lewy i prawy syn
+	if(node < size && (h[node] == value || h[left] == value || h[right] == value)) ret = true;	//sprawdza czy dany wezel, badz jego synowie sa rowni szukanej wartosci
+	if (ret == false && left < size && h[left] > value) ret = Find(value, left);	//jezeli lewy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
+	if (ret == false && right < size && h[right] > value) ret = Find(value, right);	//jezeli prawy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
 	return ret;
 }
 
@@ -185,7 +185,7 @@ void heap::Search()
 	bool exist;
 	cout << "Szukana wartosc: ";
 	cin >> value;
-	exist = Find(value, 0);
+	exist = Find(value, 0);	//zaczyna wyszukiwanie od korzenia
 	if (exist) cout << "Wyszukiwana wartosc znajduje sie w kopcu\n";
 	else cout << "Wyszukiwana wartosc nie znajduje sie w kopcu\n";
 	cout << "(nacisnij dowolny przycisk)";
