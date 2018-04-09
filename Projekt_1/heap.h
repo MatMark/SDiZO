@@ -9,6 +9,7 @@ private:
 	int size;
 	int * h;
 	bool Find(int value, int node);
+	int DelFind(int value, int node);
 
 protected:
 	
