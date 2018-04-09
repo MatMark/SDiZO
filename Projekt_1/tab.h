@@ -8,19 +8,18 @@ class tab : public inter
 private:
 	int size;
 	int * t;
+	float SymBuild(int size);
 protected:
-	
-public:
-	tab();
-	~tab();
 	void Build();
 	void Add();
 	void Delete();
 	void Search();
 	void Print();
-	float SymBuild(int size);
 	void SymAdd(int size, int rep);
 	void SymDelete(int size, int rep);
 	void SymSearch(int size, int rep);
+public:
+	tab();
+	~tab();
 };
 

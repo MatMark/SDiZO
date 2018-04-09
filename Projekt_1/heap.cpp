@@ -21,7 +21,7 @@ heap::heap()
 
 heap::~heap()
 {
-
+	delete [] h;
 }
 
 //metoda dodajaca nowy element
