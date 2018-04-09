@@ -24,7 +24,7 @@ heap::~heap()
 
 }
 
-//metoda dodajaca nowy element "PUSH"
+//metoda dodajaca nowy element
 
 void heap::Add()
 {
@@ -57,6 +57,17 @@ void heap::Add()
 	h[j] = temp;
 }
 
+//metoda wyszukujaca element do usuniecia
+int heap::DelFind(int value, int node)
+{
+	int position = NULL;
+	int left = 2*node+1, right = 2*node+2;	//lewy i prawy syn
+	if(node < size && h[node] == value) position = node;
+	if (!position && left < size && h[left] >= value) position = DelFind(value, left);
+	if (!position && right < size && h[right] >= value) position = DelFind(value, right);
+
+	return position;
+}
 
 //metoda usuwajaca dany element
 
@@ -65,56 +76,45 @@ void heap::Delete()
 	if (size > 0)
 	{
 		int value;
-		bool exist = false;
 		cout << "Wartosc do usuniecia: ";
 		cin >> value;
-		//wyszukiwanie wartosci do usuniecia
-		for(int l = 0; l < size; l++)
+		int position = DelFind(value, 0);	//wyszukiwanie pozycji elementu do usuniecia
+		if(h[position] == value)
 		{
-			if (h[l]==value) 
-			{
-				exist = true;
-				swap(h[l],h[0]);	//bo dostep tylko do korzenia
-				swap(h[0],h[size-1]);
-				break;
-			}
-		}
-		if (!exist)
-		{
-			   cout << "Podana wartosc nie znajduje sie	w kopcu";
+				swap(h[position],h[size-1]);	//zamiana usuwanego elementu z ostatnim elementem
+				size--;
+				for(int n = ceil(log2(size+1)); n >= 0; n--)
+				{
+					int j;
+					for(int k = (size-1)/2; k >= 0; k--)//przechodzimy po wszystkich rodzicach
+					{
+						j = 2 * k + 1;	//wyliczenie pozycji lewego syna
+						if(j + 1 < size && h[j + 1] > h[j]) j++;	//ustalanie, ktory syn jest wiekszy
+						if(j + 1 < size && h[k]<h[j]) swap(h[j],h[k]);	//rodzic na miejsce syna
+					}
+				}
+			    
+				int * q = new int[size];
+				//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
+				for(int i = 0; i < size; i++)
+				{
+					q[i]=h[i];
+				}
+				delete [] h;
+				h = new int[size];
+				//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
+				for(int i = 0; i < size; i++)
+				{
+					h[i]=q[i];
+				}
+				delete [] q;
+				
+				
+				cout << "Usunieto podana wartosc";
 		}
 		else
 		{
-
-			size--;
-			for(int n = ceil(log2(size+1)); n >= 0; n--)
-			{
-				int j;
-				for(int k = (size-1)/2; k >= 0; k--)//przechodzimy po wszystkich rodzicach
-				{
-					j = 2 * k + 1;	//wyliczenie pozycji lewego syna
-					if(j + 1 < size && h[j + 1] > h[j]) j++;	//ustalanie, ktory syn jest wiekszy
-					if(j + 1 < size && h[k]<h[j]) swap(h[j],h[k]);	//rodzic na miejsce syna
-				}
-			}
-		    
-			int * q = new int[size];
-			//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
-			for(int i = 0; i < size; i++)
-			{
-				q[i]=h[i];
-			}
-			delete [] h;
-			h = new int[size];
-			//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
-			for(int i = 0; i < size; i++)
-			{
-				h[i]=q[i];
-			}
-			delete [] q;
-			
-			
-			cout << "Usunieto podana wartosc";	
+			   cout << "Podana wartosc nie znajduje sie	w kopcu";
 		}
 	}
 	else 
@@ -173,8 +173,8 @@ bool heap::Find(int value, int node)
 	bool ret = false;
 	int left = 2*node+1, right = 2*node+2;	//lewy i prawy syn
 	if(node < size && (h[node] == value || h[left] == value || h[right] == value)) ret = true;	//sprawdza czy dany wezel, badz jego synowie sa rowni szukanej wartosci
-	if (ret == false && left < size && h[left] > value) ret = Find(value, left);	//jezeli lewy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
-	if (ret == false && right < size && h[right] > value) ret = Find(value, right);	//jezeli prawy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
+	if (!ret && left < size && h[left] > value) ret = Find(value, left);	//jezeli lewy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
+	if (!ret && right < size && h[right] > value) ret = Find(value, right);	//jezeli prawy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
 	return ret;
 }
 
@@ -309,20 +309,10 @@ void heap::SymDelete(int s, int r)
 		if (size > 0)
 		{
 		    int value = rand()%N;
-		   	bool exist = false;
-			//wyszukiwanie wartosci do usuniecia
-			for(int l = 0; l < size; l++)
+		   	int position = DelFind(value, 0);	//wyszukiwanie pozycji elementu do usuniecia
+			if(h[position] == value)
 			{
-				if (h[l]==value) 
-				{
-					exist = true;
-					swap(h[l],h[0]);	//bo dostep tylko do korzenia
-					swap(h[0],h[size-1]);
-					break;
-				}
-			}
-			if(exist)
-			{
+				swap(h[position],h[size-1]);	//zamiana usuwanego elementu z ostatnim elementem
 				size--;
 				for(int n = ceil(log2(size+1)); n >= 0; n--)
 				{
@@ -334,23 +324,22 @@ void heap::SymDelete(int s, int r)
 						if(j + 1 < size && h[k]<h[j]) swap(h[j],h[k]);	//rodzic na miejsce syna
 					}
 				}
+			    
+				int * q = new int[size];
+				//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
+				for(int i = 0; i < size; i++)
+				{
+					q[i]=h[i];
+				}
+				delete [] h;
+				h = new int[size];
+				//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
+				for(int i = 0; i < size; i++)
+				{
+					h[i]=q[i];
+				}
+				delete [] q;
 			}
-		    
-			int * q = new int[size];
-			//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
-			for(int i = 0; i < size; i++)
-			{
-				q[i]=h[i];
-			}
-			
-			delete [] h;
-			h = new int[size];
-			//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
-			for(int i = 0; i < size; i++)
-			{
-				h[i]=q[i];
-			}
-			delete [] q;
 
 		}
 	}
