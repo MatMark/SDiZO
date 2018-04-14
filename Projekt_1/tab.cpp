@@ -32,24 +32,29 @@ void tab::Add()
 		cin >> position;
 		cout << "Wartosc nowego elementu: ";
 		cin >> value;
-		
-		if(position <=size){
+		if(position == size)
+		{
 			size++;
 			int * q = new int[size];
-			//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy i dodajaca nowy element
-			for(int i = 0; i < size; i++)
-			{
-				if (i<position) q[i] = t[i];
-				else if (i==position) q[i] = value;
-				else q[i] = t[i-1];
-			}
+			q[size-1] = value;
+			memcpy(q, t, (size - 1) * sizeof(int));
 			delete [] t;
-			t = new int[size];
-			//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
-			for(int i = 0; i < size; i++)
-			{
-				t[i] = q[i];
-			}
+			t = q;
+			q = NULL;
+			delete [] q;
+			cout << "Dodano element na pozycji " << position << " o wartosci " << value << "\n(nacisnij dowolny przycisk)";
+			getch();
+		}
+		else if(position < size){
+			//relokacja pamieci
+			size++;
+			int * q = new int[size];
+			q[position] = value;
+			memcpy(q,t,position*sizeof(int));
+			memcpy(q+position+1,t+position,(size-position-1)*sizeof(int));
+			delete [] t;
+			t = q;
+			q = NULL;
 			delete [] q;
 			cout << "Dodano element na pozycji " << position << " o wartosci " << value << "\n(nacisnij dowolny przycisk)";
 			getch();
@@ -190,25 +195,31 @@ void tab::SymAdd(int s, int r)
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
+		size = s;
 		build_time += SymBuild(size);
 		value = rand()%size;
-		if(position <=size){
+		if(position == size)
+		{
+			//relokacja pamieci
 			size++;
 			int * q = new int[size];
-			//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy i dodajaca nowy element
-			for(int i = 0; i < size; i++)
-			{
-				if (i<position) q[i] = t[i];
-				else if (i==position) q[i] = value;
-				else q[i] = t[i-1];
-			}
+			q[size-1] = value;
+			memcpy(q, t, (size - 1) * sizeof(int));
+			delete[] t;
+			t = q;
+			q = NULL;
+			delete [] q;
+		}
+		else if(position < size){
+			size++;
+			int * q = new int[size];
+			
+			q[position] = value;
+			memcpy(q,t,position*sizeof(int));
+			memcpy(q+position+1,t+position,(size-position-1)*sizeof(int));
 			delete [] t;
-			t = new int[size];
-			//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
-			for(int i = 0; i < size; i++)
-			{
-				t[i] = q[i];
-			}
+			t = q;
+			q = NULL;
 			delete [] q;
 		}
 	}
