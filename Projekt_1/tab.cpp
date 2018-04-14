@@ -131,13 +131,9 @@ void tab::Search()
 	cout << "Szukana wartosc: ";
 	cin >> value;
 	
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < size && !exist; i++)
 	{
-		if (t[i]==value) 
-		{
-			exist = true;
-			break;
-		}
+		if (t[i]==value) exist = true;
 	}
 	
 	if (exist) cout << "Wyszukiwana wartosc znajduje sie w tablicy\n";
@@ -165,10 +161,13 @@ float tab::SymBuild(int s)
 {
 	timer * clock = new timer;
 	clock->StartCounter();
+	size = s;
+	t = NULL;
+	delete [] t;
 	t = new int[s];
 	for(int j = 0; j < s; j++)
 	{
-		t[j] = rand()%N;
+		t[j] = rand()%s;
 	}
 	float build_time = clock->GetCounter();
 	clock = NULL;
@@ -192,7 +191,7 @@ void tab::SymAdd(int s, int r)
 	for(int i = 0; i < rep; i++)
 	{
 		build_time += SymBuild(size);
-		value = rand()%N;
+		value = rand()%size;
 		if(position <=size){
 			size++;
 			int * q = new int[size];
@@ -275,14 +274,10 @@ void tab::SymSearch(int s, int r)
 	{
 		build_time += SymBuild(size);
 		exist = false;
-		value = rand()%N;
-		for(int j = 0; j < size; j++)
+		value = rand()%size;
+		for(int j = 0; j < size && !exist; j++)
 		{
-			if (t[j]==value) 
-			{
-				exist = true;
-				break;
-		   	}
+			if (t[j]==value) exist = true;
 		}
 	}
 	system("cls");

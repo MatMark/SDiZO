@@ -1,8 +1,6 @@
 #pragma once
 #include "timer.h"
 
-#define N 100000	//(0,N) przedzial losowanych wartosci
-
 class inter
 {
 private:
