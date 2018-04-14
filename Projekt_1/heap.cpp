@@ -112,22 +112,14 @@ void heap::Delete()
 						if(j + 1 < size && h[k]<h[j]) swap(h[j],h[k]);	//rodzic na miejsce syna
 					}
 				}
-			    
+				//relokacja pamieci
 				int * q = new int[size];
-				//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
-				for(int i = 0; i < size; i++)
-				{
-					q[i]=h[i];
-				}
-				delete [] h;
-				h = new int[size];
-				//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
-				for(int i = 0; i < size; i++)
-				{
-					h[i]=q[i];
-				}
+				memcpy(q, h, (size) * sizeof(int));
+				delete[] h;
+				h = q;
+				q = NULL;
 				delete [] q;
-				
+ 			
 				
 				cout << "Usunieto podana wartosc";
 		}
@@ -334,20 +326,12 @@ void heap::SymDelete(int s, int r)
 						if(j + 1 < size && h[k]<h[j]) swap(h[j],h[k]);	//rodzic na miejsce syna
 					}
 				}
-			    
+			    //relokacja pamieci
 				int * q = new int[size];
-				//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
-				for(int i = 0; i < size; i++)
-				{
-					q[i]=h[i];
-				}
-				delete [] h;
-				h = new int[size];
-				//petla przenoszaca dane z nowo utworzonej tymczasowej tablicy do wlasciwej
-				for(int i = 0; i < size; i++)
-				{
-					h[i]=q[i];
-				}
+				memcpy(q, h, (size) * sizeof(int));
+				delete[] h;
+				h = q;
+				q = NULL;
 				delete [] q;
 			}
 
