@@ -58,13 +58,32 @@ void heap::Add()
 }
 
 //metoda wyszukujaca element do usuniecia
-int heap::DelFind(int value, int node)
+int heap::Find(int value, int node)
 {
+	
 	int position = NULL;
 	int left = 2*node+1, right = 2*node+2;	//lewy i prawy syn
-	if(node < size && h[node] == value) position = node;
-	if (!position && left < size && h[left] >= value) position = DelFind(value, left);
-	if (!position && right < size && h[right] >= value) position = DelFind(value, right);
+	
+	if(node<size)	//sprawdza czy dany wezel jest rowny szukanej wartosci
+	{
+		if(h[node]==value) position = node;
+	}
+
+	if(!position)	//jezeli lewy syn jest wiekszy badz rowny niz szukana wartosc to powtarza wyszukiwanie od niego
+	{
+		if(left<size)
+		{
+			if(h[left]>=value) position = Find(value, left);
+		}	
+	}
+
+	if(!position)	//jezeli prawy syn jest wiekszy badz rowny niz szukana wartosc to powtarza wyszukiwanie od niego
+	{
+		if(right<size)
+		{
+			if(h[right]>=value) position = Find(value, right);
+		}	
+	}
 
 	return position;
 }
@@ -78,7 +97,7 @@ void heap::Delete()
 		int value;
 		cout << "Wartosc do usuniecia: ";
 		cin >> value;
-		int position = DelFind(value, 0);	//wyszukiwanie pozycji elementu do usuniecia
+		int position = Find(value, 0);	//wyszukiwanie pozycji elementu do usuniecia
 		if(h[position] == value)
 		{
 				swap(h[position],h[size-1]);	//zamiana usuwanego elementu z ostatnim elementem
@@ -167,26 +186,14 @@ void heap::Build()
 
 }
 
-//metoda wywolywana do wyszukiwania elementu
-bool heap::Find(int value, int node)
-{
-	bool ret = false;
-	int left = 2*node+1, right = 2*node+2;	//lewy i prawy syn
-	if(node < size && (h[node] == value || h[left] == value || h[right] == value)) ret = true;	//sprawdza czy dany wezel, badz jego synowie sa rowni szukanej wartosci
-	if (!ret && left < size && h[left] > value) ret = Find(value, left);	//jezeli lewy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
-	if (!ret && right < size && h[right] > value) ret = Find(value, right);	//jezeli prawy syn jest wiekszy niz szukana wartosc to powtarza wyszukiwanie od niego
-	return ret;
-}
 
 //metoda wyszukujaca wybrany element
 void heap::Search()
 {
 	int value;
-	bool exist;
 	cout << "Szukana wartosc: ";
 	cin >> value;
-	exist = Find(value, 0);	//zaczyna wyszukiwanie od korzenia
-	if (exist) cout << "Wyszukiwana wartosc znajduje sie w kopcu\n";
+	if (h[Find(value, 0)]==value) cout << "Wyszukiwana wartosc znajduje sie w kopcu\n"; //zaczyna wyszukiwanie od korzenia
 	else cout << "Wyszukiwana wartosc nie znajduje sie w kopcu\n";
 	cout << "(nacisnij dowolny przycisk)";
 	getch();
@@ -225,13 +232,16 @@ float heap::SymBuild(int s)
 {
 	timer * clock = new timer;
 	clock->StartCounter();
+	size = s;
 	int temp;
+	h = NULL;
+	delete [] h;
 	h = new int[s];
-	h[0] = rand()%N;
+	h[0] = rand()%s;
 	for(int i = 1; i < s; i++)
 	{
 		//uzyty algorytm wstawiania nowego elementu
-		temp = rand()%N;
+		temp = rand()%s;
 		int j, k;
 		j=i;
 		k=(j-1)/2;
@@ -254,13 +264,13 @@ float heap::SymBuild(int s)
 void heap::SymAdd(int s, int r)
 {
 	int temp, size = s, rep = r;
-	float build_time =0;
+	float build_time = 0;
 	timer * clock = new timer;
 	clock->StartCounter();
 	for(int i = 0; i < rep; i++)
 	{
 		build_time += SymBuild(size);
-		temp = rand()%N;
+		temp = rand()%s;
 		int * q = new int[size];
 		//petla kopiujaca wszystkie elementy do nowej tymczasowej tablicy
 		for(int i = 0; i < size; i++)
@@ -308,8 +318,8 @@ void heap::SymDelete(int s, int r)
 		build_time += SymBuild(size);
 		if (size > 0)
 		{
-		    int value = rand()%N;
-		   	int position = DelFind(value, 0);	//wyszukiwanie pozycji elementu do usuniecia
+		    int value = rand()%size;
+		   	int position = Find(value, 0);	//wyszukiwanie pozycji elementu do usuniecia
 			if(h[position] == value)
 			{
 				swap(h[position],h[size-1]);	//zamiana usuwanego elementu z ostatnim elementem
@@ -362,7 +372,7 @@ void heap::SymSearch(int s, int r)
 	for(int i = 0; i < rep; i++)
 	{
 		build_time += SymBuild(size);
-		value = rand()%N;
+		value = rand()%size;
 		exist = Find(value, 0);
 	}
 	system("cls");

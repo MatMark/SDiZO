@@ -184,11 +184,12 @@ float list::SymBuild(int s)
 {
 	timer * clock = new timer;
 	clock->StartCounter();
+	size = s;
 	element * temp;
 	for(int j = 0; j < s; j++)
 	{
 		temp = new element;
-		temp->value = rand()%N;
+		temp->value = rand()%s;
 		temp->next = NULL;
 		temp->prev = last;
 		last = temp;
@@ -217,14 +218,14 @@ void list::SymAdd(int s, int r)
 		build_time += SymBuild(size);
 		if  (start == 1){
 			temp = new element;
-			temp->value=rand()%N;
+			temp->value=rand()%s;
 			temp->prev=NULL;
 			temp->next=first;
 			first=temp;
 		}
 		else if (start == 2){
 			temp = new element;
-			temp->value=rand()%N;
+			temp->value=rand()%s;
 			temp->next=NULL;
 			temp->prev=last;
 			last=temp;
@@ -242,12 +243,12 @@ void list::SymAdd(int s, int r)
 				temp->next = added;
 				added->prev = temp;
 				added->next->prev = added;
-				added->value = rand()%N;
+				added->value = rand()%s;
 			}
 			else if (!temp->prev)
 			{
 				temp = new element;
-				temp->value=rand()%N;
+				temp->value=rand()%s;
 		   	   	temp->prev=NULL;
 				temp->next=first;
 				first=temp;
@@ -255,7 +256,7 @@ void list::SymAdd(int s, int r)
 			else if (!temp->next)
 			{
 				temp = new element;
-			   	temp->value=rand()%N;
+			   	temp->value=rand()%s;
 				temp->next=NULL;
 			   	temp->prev=last;
 				last=temp;
@@ -341,7 +342,7 @@ void list::SymSearch(int s, int r)
 	{
 		build_time += SymBuild(size);
 		exist = false;
-		value = rand()%N;
+		value = rand()%s;
 		temp = first;
 		for(int i = 0; i < size && !exist; i++)
 		{
